@@ -377,10 +377,10 @@ class BaseWWTask(BaseTask, FindFeature, OCR):
         self.wait_in_team_and_world(time_out=120)
 
     def click_traval_button(self):
-        if btn := self.find_one('fast_travel_custom', threshold=0.6):
-            self.click_box(btn, relative_x=1)
+        if self.find_one('fast_travel_custom', threshold=0.6) or self.find_one('remove_custom', threshold=0.6):
+            self.click_relative(0.91, 0.92)
             self.sleep(1)
-            return self.wait_click_feature('gray_confirm_exit_button', relative_x=-1, raise_if_not_found=True,
+            return self.wait_click_feature('confirm_btn_hcenter_vcenter', relative_x=-1, raise_if_not_found=True,
                                            threshold=0.7,
                                            time_out=5)
         elif btn := self.find_one('gray_teleport', threshold=0.7):
@@ -392,16 +392,17 @@ class BaseWWTask(BaseTask, FindFeature, OCR):
     def wait_book(self):
         gray_book_boss = self.wait_until(
             lambda: self.find_one('gray_book_all_monsters', vertical_variance=0.8, horizontal_variance=0.05,
-                                  threshold=0.6, canny_lower=50,
-                                  canny_higher=150),
+                                  threshold=0.4),
             time_out=3, wait_until_before_delay=2)
+        logger.info(f'found gray_book_boss {gray_book_boss}')
         return gray_book_boss
 
     def check_main(self):
         if not self.in_team()[0]:
             self.send_key('esc')
             self.sleep(1)
-            return self.in_team()[0]
+            if not self.in_team()[0]:
+                raise Exception('must be in game world and in teams')
         return True
 
 

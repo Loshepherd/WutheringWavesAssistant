@@ -57,6 +57,10 @@ config = {
     }, {
         'name': 'China',
         'git_url': 'https://gitee.com/ok-olding/ok-wuthering-waves',
+        'pip_url': 'https://pypi.tuna.tsinghua.edu.cn/simple'
+    }, {
+        'name': '腾讯云',
+        'git_url': 'https://gitee.com/ok-olding/ok-wuthering-waves',
         'pip_url': 'https://mirrors.cloud.tencent.com/pypi/simple'
     }, {
         'name': '阿里云',
@@ -106,12 +110,13 @@ config = {
         ["src.task.IllusiveRealmTask", "IllusiveRealmTask"],
         ["src.task.FarmEchoTask", "FarmEchoTask"],
         ["src.task.FarmWorldBossTask", "FarmWorldBossTask"],
-        ["src.task.FiveToOneTask", "FiveToOneTask"],
+        ["src.task.DiscardEchoTask", "DiscardEchoTask"],
         ["src.task.DiagnosisTask", "DiagnosisTask"],
     ], 'trigger_tasks': [
         ["src.task.AutoCombatTask", "AutoCombatTask"],
         ["src.task.AutoPickTask", "AutoPickTask"],
         ["src.task.SkipDialogTask", "AutoDialogTask"],
         ["src.task.MultiplayerAutoCombatTask", "MultiplayerAutoCombatTask"],
+        ["src.task.MouseResetTask", "MouseResetTask"]
     ]
 }

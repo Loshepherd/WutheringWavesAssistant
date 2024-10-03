@@ -26,7 +26,6 @@ class FarmEchoTask(BaseCombatTask):
 
     def run(self):
         self.set_check_monthly_card()
-        self.handler.post(self.mouse_reset, 0.01)
         if not self.in_team()[0]:
             self.log_error('must be in game world and in teams, please check you game resolution is 16:9', notify=True)
             return
@@ -60,7 +59,7 @@ class FarmEchoTask(BaseCombatTask):
             self.incr_drop(dropped)
             self.sleep(0.5)
             self.send_key('esc')
-            self.wait_click_feature('gray_confirm_exit_button', relative_x=-1, raise_if_not_found=True,
+            self.wait_click_feature('confirm_btn_hcenter_vcenter', relative_x=-1, raise_if_not_found=True,
                                     use_gray_scale=True, wait_until_before_delay=2)
             self.wait_in_team_and_world(time_out=120)
             self.sleep(2)
