@@ -11,6 +11,7 @@ class Priority(IntEnum):
     MIN = -999999999
     SWITCH_CD = -1000
     CURRENT_CHAR = -100
+    CURRENT_CHAR_PLUS = CURRENT_CHAR + 1
     SKILL_AVAILABLE = 100
     ALL_IN_CD = 0
     NORMAL = 10
@@ -280,7 +281,7 @@ class BaseChar:
             self.logger.info(f'click_liberation end {duration}')
         return clicked
 
-    def add_freeze_duration(self, start, duration=-1, freeze_time=0.2):
+    def add_freeze_duration(self, start, duration=-1, freeze_time=0.1):
         if duration == -1:
             duration = time.time() - start
         if start > 0 and duration > freeze_time:
@@ -293,6 +294,8 @@ class BaseChar:
         for freeze_start, duration, freeze_time in self.freeze_durations:
             if start < freeze_start:
                 to_minus += duration - freeze_time
+        if to_minus != 0:
+            self.logger.debug(f'time_elapsed_accounting_for_freeze to_minus {to_minus}')
         return time.time() - start - to_minus
 
     def get_liberation_key(self):

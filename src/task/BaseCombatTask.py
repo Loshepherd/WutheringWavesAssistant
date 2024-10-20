@@ -14,6 +14,7 @@ from src import text_white_color
 from src.char import BaseChar
 from src.char.BaseChar import Priority, dot_color
 from src.char.CharFactory import get_char_by_pos
+from src.char.Healer import Healer
 from src.combat.CombatCheck import CombatCheck
 from src.task.BaseWWTask import BaseWWTask
 
@@ -43,7 +44,7 @@ class BaseCombatTask(BaseWWTask, FindFeature, OCR, CombatCheck):
         CombatCheck.__init__(self)
         self.chars = [None, None, None]
         self.char_texts = ['char_1_text', 'char_2_text', 'char_3_text']
-        self.key_config = self.get_config(key_config_option)
+        self.key_config = self.get_global_config(key_config_option)
 
         self.mouse_pos = None
         self.combat_start = 0
@@ -67,6 +68,27 @@ class BaseCombatTask(BaseWWTask, FindFeature, OCR, CombatCheck):
                 self.in_liberation = True
                 self.next_frame()
         logger.info(f'send_key_and_wait_animation timed out {key}')
+
+    def teleport_to_heal(self):
+        self.info['Death Count'] = self.info.get('Death Count', 0) + 1
+        self.send_key('esc')
+        self.sleep(1)
+        self.log_info('click m to open the map')
+        self.send_key('m')
+        self.sleep(2)
+        for i in range(4):
+            self.click_relative(0.94, 0.29, after_sleep=0.5)
+            logger.info(f'click zoom')
+        self.click_relative(0.91, 0.77, after_sleep=1)
+        self.click_relative(0.63, 0.17, after_sleep=1, name="first_map")
+        self.log_info('click change map')
+        self.click_relative(0.77, 0.15, after_sleep=1)
+        self.click_relative(0.48, 0.26, after_sleep=1)
+        logger.info(f'click heal')
+        travel = self.wait_feature('gray_teleport', raise_if_not_found=True, time_out=3)
+        self.click_box(travel, relative_x=1.5)
+        self.wait_in_team_and_world(time_out=20)
+        self.sleep(2)
 
     def raise_not_in_combat(self, message, exception_type=None):
         logger.error(message)
@@ -197,7 +219,6 @@ class BaseCombatTask(BaseWWTask, FindFeature, OCR, CombatCheck):
 
         if post_action:
             post_action()
-        self.next_frame()
         logger.info(f'switch_next_char end {(current_char.last_switch_time - start):.3f}s')
 
     def get_liberation_key(self):
@@ -278,29 +299,25 @@ class BaseCombatTask(BaseWWTask, FindFeature, OCR, CombatCheck):
             self.raise_not_in_combat('combat check not in combat')
 
     def load_hotkey(self, force=False):
-        if not self.key_config['HotKey Verify'] and not force:
-            return
-        resonance_key = self.ocr(0.82, 0.92, 0.85, 0.96, match=re.compile(r'^[a-zA-Z]$'), threshold=0.8,
-                                 name='resonance_key', use_grayscale=True)
-        echo_key = self.ocr(0.88, 0.92, 0.90, 0.96, match=re.compile(r'^[a-zA-Z]$'), threshold=0.8,
-                            name='echo_key')
-        liberation_key = self.ocr(0.93, 0.92, 0.96, 0.96, match=re.compile(r'^[a-zA-Z]$'), threshold=0.8,
-                                  name='liberation_key')
-        keys_str = str(resonance_key) + str(echo_key) + str(liberation_key)
+        if not self.key_config['HotKey Verify'] or force:
 
-        # if not resonance_key or not echo_key or not liberation_key:
-        #     raise Exception(ok.gui.app.tr(
-        #         "Can't load game hotkey, please equip echos for all characters and use A-Z as hotkeys for skills, detected key:{}").format(
-        #         keys_str))
-        if echo_key:
-            self.key_config['Echo Key'] = echo_key[0].name.lower()
-        if liberation_key:
-            self.key_config['Liberation Key'] = liberation_key[0].name.lower()
-        if resonance_key:
-            self.key_config['Resonance Key'] = resonance_key[0].name.lower()
-        self.key_config['HotKey Verify'] = False
-        logger.info(f'set hotkey {self.key_config}')
-        self.info['Skill HotKeys'] = keys_str
+            resonance_key = self.ocr(0.82, 0.92, 0.85, 0.96, match=re.compile(r'^[a-zA-Z]$'), threshold=0.8,
+                                     name='resonance_key', use_grayscale=True)
+            echo_key = self.ocr(0.88, 0.92, 0.90, 0.96, match=re.compile(r'^[a-zA-Z]$'), threshold=0.8,
+                                name='echo_key')
+            liberation_key = self.ocr(0.93, 0.92, 0.96, 0.96, match=re.compile(r'^[a-zA-Z]$'), threshold=0.8,
+                                      name='liberation_key')
+            keys_str = str(resonance_key) + str(echo_key) + str(liberation_key)
+
+            if echo_key:
+                self.key_config['Echo Key'] = echo_key[0].name.lower()
+            if liberation_key:
+                self.key_config['Liberation Key'] = liberation_key[0].name.lower()
+            if resonance_key:
+                self.key_config['Resonance Key'] = resonance_key[0].name.lower()
+            self.key_config['HotKey Verify'] = True
+            self.log_info(f'set hotkey success {self.key_config.values()}', notify=True, tray=True)
+            self.info['Skill HotKeys'] = keys_str
 
     def load_chars(self):
         self.load_hotkey()
@@ -333,13 +350,19 @@ class BaseCombatTask(BaseWWTask, FindFeature, OCR, CombatCheck):
                 self.chars = self.chars[:2]
             logger.info(f'team size changed to 2')
 
+        healer_count = 0
         for char in self.chars:
             if char is not None:
                 char.reset_state()
+                if isinstance(char, Healer):
+                    healer_count += 1
                 if char.index == current_index:
                     char.is_current_char = True
                 else:
                     char.is_current_char = False
+        if healer_count >= 2:
+            self.log_error(f"Can not auto combat because team can only have one healer at most", notify=True, tray=True)
+            self.pause()
         self.combat_start = time.time()
 
         self.log_info(f'load chars success {self.chars}')

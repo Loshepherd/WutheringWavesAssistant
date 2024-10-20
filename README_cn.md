@@ -8,9 +8,12 @@
 </div>
 
 ![Static Badge](https://img.shields.io/badge/platfrom-Windows-blue?color=blue)
-![GitHub release (with filter)](https://img.shields.io/github/v/release/ok-oldking/ok-wuthering-waves)
-![GitHub all releases](https://img.shields.io/github/downloads/ok-oldking/ok-wuthering-waves/total)
-![Static Badge](https://img.shields.io/badge/QQ%E7%BE%A4-970523295-purple)
+[![GitHub release (with filter)](https://img.shields.io/github/v/release/ok-oldking/ok-wuthering-waves)](https://github.com/ok-oldking/ok-wuthering-waves/releases)
+[![GitHub all releases](https://img.shields.io/github/downloads/ok-oldking/ok-wuthering-waves/total)](https://github.com/ok-oldking/ok-wuthering-waves/releases)
+[![Static Badge](https://img.shields.io/badge/QQ%E7%BE%A4-970523295-purple)](https://qm.qq.com/q/ufUCrCEq6A)
+[![Static Badge](https://img.shields.io/badge/Discord-blue?link=https%3A%2F%2Fdiscord.gg%2FZMHXx5QBuH)](https://discord.gg/Sy6etyCRed)
+
+演示和教程 [![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=YouTube&logoColor=white)](https://youtu.be/apalaRDDmVw)
 
 # 免责声明
 
@@ -34,11 +37,11 @@
 
 ### 有多强?
 
-1. 4K分辨率流畅运行,支持所有16:9分辨率,1600x900以上, 1280x720不支持是因为鸣潮bug, 它的1280x720并不是1280x720
+1. 4K分辨率流畅运行,支持所有16:9分辨率,1600x900以上, 1280x720不支持是因为鸣潮bug, 它的1280x720并不是1280x720. 大多数功能也可以在21:9等宽屏分辨率运行
 2. 可后台运行,可窗口化,可全屏,屏幕缩放比例无要求
-3. 自动战斗比大多数玩家手操都强, 深渊可满星, 演示视频: [今汐12秒轴](https://www.bilibili.com/video/BV1Hx4y1t7NP/)
-4. 无需安装Cuda之类, 基本不占用显卡资源, 性能优化到支持自动战斗10毫秒左右的响应时间
-5. 可高度自定义角色出招逻辑(动态合轴) [角色列表](src/char)
+3. 自动战斗比大多数玩家手操都强, 深渊可满星, 演示视频: [今汐12秒轴](https://www.bilibili.com/vi
+4. 全角色自动识别，无需配置出招表，一键运行
+5. 可后台自动静音游戏
 
 ### 出现问题请检查
 
@@ -60,7 +63,7 @@
 
 ### Usage (Python Source Code)
 
-Use Python 3.11, other versions might work but are not tested.
+Use Python 3.12，other versions might work but are not tested.
 
 ```
 pip install -r requirements.txt #install python dependencies
@@ -69,6 +72,14 @@ python main_debug.py # run the debug version
 python main_gpu_debug.py # run the gpu debug version
 python main_gpu.py # run the gpu release version
 ```
+
+cli/)
+
+### 加入我们
+
+* 由于基于[ok-script](https://github.com/ok-oldking/ok-script)开发，项目代码仅有3000行（Python），简单易维护
+* 也欢迎使用[ok-script](https://github.com/ok-oldking/ok-script)开发你自己的开源项目，一套代码同时支持PC，模拟器，真机。分辨率自适应，宽屏自适应。无服务器增量更新等功能
+* 有兴趣的请加开发者群926858895
 
 ### 致谢
 

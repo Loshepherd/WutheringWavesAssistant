@@ -38,8 +38,6 @@ class Jinhsi(BaseChar):
             self.logger.info(
                 f'switch priority max because has_intro {has_intro} incarnation {self.incarnation} incarnation_cd {self.incarnation_cd}')
             return Priority.MAX
-        elif self.echo_available():
-            return super().do_get_switch_priority(current_char, has_intro)
         else:
             return Priority.MIN
 
@@ -123,12 +121,6 @@ class Jinhsi(BaseChar):
             if self.task.debug:
                 self.task.screenshot(f'handle_intro e end {time.time() - start}')
             break
-        # if time.time() - start < 2:
-        #     self.logger.info(f'handle_intro fly e in_cd {time.time() - start}')
-        #     self.incarnation_cd = True
-        #     if not self.click_echo():
-        #         self.task.click()
-        #     return
         self.last_fly_e_time = start
         if self.click_liberation(send_click=True):
             self.continues_normal_attack(0.3)

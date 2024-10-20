@@ -29,8 +29,8 @@ class BaseWWTask(BaseTask, FindFeature, OCR):
 
     def __init__(self):
         super().__init__()
-        self.pick_echo_config = self.get_config(pick_echo_config_option)
-        self.monthly_card_config = self.get_config(monthly_card_config_option)
+        self.pick_echo_config = self.get_global_config(pick_echo_config_option)
+        self.monthly_card_config = self.get_global_config(monthly_card_config_option)
         self.next_monthly_card_start = 0
 
         self.multiplayer_check_interval = 3
@@ -377,12 +377,17 @@ class BaseWWTask(BaseTask, FindFeature, OCR):
         self.wait_in_team_and_world(time_out=120)
 
     def click_traval_button(self):
-        if self.find_one('fast_travel_custom', threshold=0.6) or self.find_one('remove_custom', threshold=0.6):
-            self.click_relative(0.91, 0.92)
-            self.sleep(1)
-            return self.wait_click_feature('confirm_btn_hcenter_vcenter', relative_x=-1, raise_if_not_found=True,
-                                           threshold=0.7,
-                                           time_out=5)
+        if self.find_one(['fast_travel_custom', 'remove_custom'], threshold=0.6):
+            self.click_relative(0.91, 0.92, after_sleep=1)
+            if self.wait_click_feature(['confirm_btn_hcenter_vcenter', 'confirm_btn_highlight_hcenter_vcenter'],
+                                       relative_x=-1, raise_if_not_found=True,
+                                       threshold=0.7,
+                                       time_out=5):
+                self.wait_click_feature(['confirm_btn_hcenter_vcenter', 'confirm_btn_highlight_hcenter_vcenter'],
+                                        relative_x=-1, raise_if_not_found=False,
+                                        threshold=0.7,
+                                        time_out=1)
+                return True
         elif btn := self.find_one('gray_teleport', threshold=0.7):
             return self.click_box(btn, relative_x=1)
 
